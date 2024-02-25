@@ -1,13 +1,15 @@
 package org.example.paymentService.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.example.paymentService.enums.PaymentInstrumentType;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public abstract class PaymentInstrument {
     private String paymentInstrumentId;
     private Long UserId;
+
+    public abstract PaymentInstrumentType getPaymentInstrumentType();
 }

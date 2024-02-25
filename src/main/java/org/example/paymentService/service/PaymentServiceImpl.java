@@ -6,6 +6,7 @@ import org.example.paymentService.api.resource.PaymentRequest;
 import org.example.paymentService.api.resource.PaymentResponse;
 import org.example.paymentService.mapper.PaymentMapper;
 import org.example.paymentService.model.Payment;
+import org.example.paymentService.model.PaymentInstrument;
 import org.example.paymentService.repository.PaymentRepository;
 import org.example.paymentService.service.client.PaymentGatewayResponse;
 import org.springframework.stereotype.Service;
@@ -18,10 +19,13 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentGatewayService paymentGatewayService;
     private final PaymentMapper paymentMapper;
     private final PaymentRepository paymentRepository;
+    private final PaymentInstrumentService paymentInstrumentService;
 
     @Override
     public PaymentResponse pay(PaymentRequest paymentRequest) {
-        Payment payment = paymentMapper.map(paymentRequest);
+        PaymentInstrument paymentInstrument = paymentInstrumentService
+                .getPaymentInstrument(paymentRequest.paymentInstrumentId());
+        Payment payment = paymentMapper.map(paymentRequest, paymentInstrument);
         PaymentGatewayResponse pay = sendToPaymentGateway(payment);
         setPaymentResult(pay, payment);
         paymentRepository.save(payment);

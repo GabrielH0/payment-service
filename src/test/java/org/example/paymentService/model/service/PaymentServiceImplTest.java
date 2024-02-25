@@ -9,6 +9,7 @@ import org.example.paymentService.model.PaymentInstrumentCard;
 import org.example.paymentService.model.utils.TestUtils;
 import org.example.paymentService.repository.PaymentRepository;
 import org.example.paymentService.service.PaymentGatewayService;
+import org.example.paymentService.service.PaymentInstrumentService;
 import org.example.paymentService.service.PaymentServiceImpl;
 import org.example.paymentService.service.client.PaymentGatewayResponse;
 import org.junit.jupiter.api.Assertions;
@@ -21,6 +22,7 @@ public class PaymentServiceImplTest {
     private PaymentRepository paymentRepository;
     private PaymentGatewayService paymentGatewayService;
     private PaymentMapper paymentMapper;
+    private PaymentInstrumentService paymentInstrumentService;
     private PaymentServiceImpl paymentService;
 
     @BeforeEach
@@ -28,7 +30,9 @@ public class PaymentServiceImplTest {
         paymentRepository = Mockito.mock(PaymentRepository.class);
         paymentGatewayService = Mockito.mock(PaymentGatewayService.class);
         paymentMapper = Mockito.mock(PaymentMapper.class);
-        paymentService = new PaymentServiceImpl(paymentGatewayService, paymentMapper, paymentRepository);
+        paymentInstrumentService = Mockito.mock(PaymentInstrumentService.class);
+        paymentService = new PaymentServiceImpl(paymentGatewayService, paymentMapper, paymentRepository,
+                paymentInstrumentService);
     }
 
     @Test
@@ -40,15 +44,17 @@ public class PaymentServiceImplTest {
         PaymentResponse paymentResponse = TestUtils.getPaymentResponse(PaymentStatus.PAID);
         PaymentGatewayResponse paymentGatewayResponse = TestUtils.getSuccessPaymentGatewayResponse();
         Payment payment = TestUtils.getPayment(orderId, paymentInstrumentCard);
+        Mockito.when(paymentInstrumentService.getPaymentInstrument(paymentRequest.paymentInstrumentId()))
+                .thenReturn(paymentInstrumentCard);
         Mockito.when(paymentGatewayService.pay(Mockito.any())).thenReturn(paymentGatewayResponse);
-        Mockito.when(paymentMapper.map(paymentRequest)).thenReturn(payment);
+        Mockito.when(paymentMapper.map(paymentRequest, paymentInstrumentCard)).thenReturn(payment);
         Mockito.when(paymentRepository.save(payment)).thenReturn(payment);
         Mockito.when(paymentMapper.map(payment)).thenReturn(paymentResponse);
 
         PaymentResponse response = paymentService.pay(paymentRequest);
 
         Mockito.verify(paymentGatewayService, Mockito.times(1)).pay(payment);
-        Mockito.verify(paymentMapper, Mockito.times(1)).map(paymentRequest);
+        Mockito.verify(paymentMapper, Mockito.times(1)).map(paymentRequest, paymentInstrumentCard);
         Mockito.verify(paymentRepository, Mockito.times(1)).save(payment);
         Mockito.verify(paymentMapper, Mockito.times(1)).map(payment);
         Assertions.assertEquals(paymentResponse.paymentId(), response.paymentId());
@@ -64,15 +70,17 @@ public class PaymentServiceImplTest {
         PaymentResponse paymentResponse = TestUtils.getPaymentResponse(PaymentStatus.REJECTED);
         PaymentGatewayResponse paymentGatewayResponse = TestUtils.getFailedPaymentGatewayResponse();
         Payment payment = TestUtils.getPayment(orderId, paymentInstrumentCard);
+        Mockito.when(paymentInstrumentService.getPaymentInstrument(paymentRequest.paymentInstrumentId()))
+                .thenReturn(paymentInstrumentCard);
         Mockito.when(paymentGatewayService.pay(Mockito.any())).thenReturn(paymentGatewayResponse);
-        Mockito.when(paymentMapper.map(paymentRequest)).thenReturn(payment);
+        Mockito.when(paymentMapper.map(paymentRequest, paymentInstrumentCard)).thenReturn(payment);
         Mockito.when(paymentRepository.save(payment)).thenReturn(payment);
         Mockito.when(paymentMapper.map(payment)).thenReturn(paymentResponse);
 
         PaymentResponse response = paymentService.pay(paymentRequest);
 
         Mockito.verify(paymentGatewayService, Mockito.times(1)).pay(payment);
-        Mockito.verify(paymentMapper, Mockito.times(1)).map(paymentRequest);
+        Mockito.verify(paymentMapper, Mockito.times(1)).map(paymentRequest, paymentInstrumentCard);
         Mockito.verify(paymentRepository, Mockito.times(1)).save(payment);
         Mockito.verify(paymentMapper, Mockito.times(1)).map(payment);
         Assertions.assertEquals(paymentResponse.paymentId(), response.paymentId());
@@ -86,14 +94,16 @@ public class PaymentServiceImplTest {
         PaymentInstrumentCard paymentInstrumentCard = TestUtils.getPaymentInstrumentCard(paymentInstrumentId);
         PaymentRequest paymentRequest = TestUtils.getPaymentRequest(paymentInstrumentId);
         Payment payment = TestUtils.getPayment(orderId, paymentInstrumentCard);
-        Mockito.when(paymentMapper.map(paymentRequest)).thenReturn(payment);
+        Mockito.when(paymentInstrumentService.getPaymentInstrument(paymentRequest.paymentInstrumentId()))
+                .thenReturn(paymentInstrumentCard);
+        Mockito.when(paymentMapper.map(paymentRequest, paymentInstrumentCard)).thenReturn(payment);
         Mockito.when(paymentRepository.save(payment)).thenReturn(payment);
         Mockito.when(paymentGatewayService.pay(payment))
                 .thenThrow(new RuntimeException("Error sending to payment gateway"));
 
         paymentService.pay(paymentRequest);
 
-        Mockito.verify(paymentMapper, Mockito.times(1)).map(paymentRequest);
+        Mockito.verify(paymentMapper, Mockito.times(1)).map(paymentRequest, paymentInstrumentCard);
         Mockito.verify(paymentRepository, Mockito.times(1)).save(payment);
     }
 }

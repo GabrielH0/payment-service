@@ -1,4 +1,4 @@
-package org.example.paymentService.model.service;
+package org.example.paymentService.service;
 
 import org.example.paymentService.api.resource.PaymentRequest;
 import org.example.paymentService.api.resource.PaymentResponse;
@@ -6,12 +6,9 @@ import org.example.paymentService.enums.PaymentStatus;
 import org.example.paymentService.mapper.PaymentMapper;
 import org.example.paymentService.model.Payment;
 import org.example.paymentService.model.PaymentInstrumentCard;
-import org.example.paymentService.model.utils.TestUtils;
 import org.example.paymentService.repository.PaymentRepository;
-import org.example.paymentService.service.PaymentGatewayService;
-import org.example.paymentService.service.PaymentInstrumentService;
-import org.example.paymentService.service.PaymentServiceImpl;
 import org.example.paymentService.service.client.PaymentGatewayResponse;
+import org.example.paymentService.utils.TestUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

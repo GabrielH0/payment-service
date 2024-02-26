@@ -1,4 +1,4 @@
-package org.example.paymentService.model.utils;
+package org.example.paymentService.utils;
 
 import org.example.paymentService.api.resource.PaymentInstrumentResponse;
 import org.example.paymentService.api.resource.PaymentRequest;
@@ -27,7 +27,7 @@ public class TestUtils {
     public static PaymentResponse getPaymentResponse(PaymentStatus paymentStatus) {
         return new PaymentResponse("paymentId",paymentStatus,
                 new PaymentInstrumentResponse("paymentInstrumentId", PaymentInstrumentType.CARD),
-                Instant.now(), "orderId", 1L);
+                Instant.now(), "orderId", 1L, BigInteger.valueOf(100), null);
     }
 
     public static PaymentGatewayResponse getSuccessPaymentGatewayResponse() {

@@ -5,5 +5,5 @@ import org.example.paymentService.api.resource.PaymentResponse;
 
 public interface PaymentService {
 
-    PaymentResponse pay(PaymentRequest paymentRequest);
+    PaymentResponse pay(PaymentRequest paymentRequest, Long userId);
 }

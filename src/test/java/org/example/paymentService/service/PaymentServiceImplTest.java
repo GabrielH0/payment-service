@@ -34,6 +34,7 @@ public class PaymentServiceImplTest {
 
     @Test
     public void payShouldReturnPaymentSuccessResponse() {
+        Long userId = 1L;
         String paymentInstrumentId = "paymentInstrumentId";
         String orderId = "orderId";
         PaymentInstrumentCard paymentInstrumentCard = TestUtils.getPaymentInstrumentCard(paymentInstrumentId);
@@ -41,14 +42,14 @@ public class PaymentServiceImplTest {
         PaymentResponse paymentResponse = TestUtils.getPaymentResponse(PaymentStatus.PAID);
         PaymentGatewayResponse paymentGatewayResponse = TestUtils.getSuccessPaymentGatewayResponse();
         Payment payment = TestUtils.getPayment(orderId, paymentInstrumentCard);
-        Mockito.when(paymentInstrumentService.getPaymentInstrument(paymentRequest.paymentInstrumentId()))
+        Mockito.when(paymentInstrumentService.getPaymentInstrument(paymentRequest.paymentInstrumentId(), userId))
                 .thenReturn(paymentInstrumentCard);
         Mockito.when(paymentGatewayService.pay(Mockito.any())).thenReturn(paymentGatewayResponse);
         Mockito.when(paymentMapper.map(paymentRequest, paymentInstrumentCard)).thenReturn(payment);
         Mockito.when(paymentRepository.save(payment)).thenReturn(payment);
         Mockito.when(paymentMapper.map(payment)).thenReturn(paymentResponse);
 
-        PaymentResponse response = paymentService.pay(paymentRequest);
+        PaymentResponse response = paymentService.pay(paymentRequest, userId);
 
         Mockito.verify(paymentGatewayService, Mockito.times(1)).pay(payment);
         Mockito.verify(paymentMapper, Mockito.times(1)).map(paymentRequest, paymentInstrumentCard);
@@ -60,6 +61,7 @@ public class PaymentServiceImplTest {
 
     @Test
     public void payShouldReturnNotPaidResponse() {
+        Long userId = 1L;
         String paymentInstrumentId = "paymentInstrumentId";
         String orderId = "orderId";
         PaymentInstrumentCard paymentInstrumentCard = TestUtils.getPaymentInstrumentCard(paymentInstrumentId);
@@ -67,14 +69,14 @@ public class PaymentServiceImplTest {
         PaymentResponse paymentResponse = TestUtils.getPaymentResponse(PaymentStatus.REJECTED);
         PaymentGatewayResponse paymentGatewayResponse = TestUtils.getFailedPaymentGatewayResponse();
         Payment payment = TestUtils.getPayment(orderId, paymentInstrumentCard);
-        Mockito.when(paymentInstrumentService.getPaymentInstrument(paymentRequest.paymentInstrumentId()))
+        Mockito.when(paymentInstrumentService.getPaymentInstrument(paymentRequest.paymentInstrumentId(), userId))
                 .thenReturn(paymentInstrumentCard);
         Mockito.when(paymentGatewayService.pay(Mockito.any())).thenReturn(paymentGatewayResponse);
         Mockito.when(paymentMapper.map(paymentRequest, paymentInstrumentCard)).thenReturn(payment);
         Mockito.when(paymentRepository.save(payment)).thenReturn(payment);
         Mockito.when(paymentMapper.map(payment)).thenReturn(paymentResponse);
 
-        PaymentResponse response = paymentService.pay(paymentRequest);
+        PaymentResponse response = paymentService.pay(paymentRequest, userId);
 
         Mockito.verify(paymentGatewayService, Mockito.times(1)).pay(payment);
         Mockito.verify(paymentMapper, Mockito.times(1)).map(paymentRequest, paymentInstrumentCard);
@@ -86,19 +88,20 @@ public class PaymentServiceImplTest {
 
     @Test
     public void payShouldSaveWhenErrorSendingToPaymentGateway() {
+        Long userId = 1L;
         String paymentInstrumentId = "paymentInstrumentId";
         String orderId = "orderId";
         PaymentInstrumentCard paymentInstrumentCard = TestUtils.getPaymentInstrumentCard(paymentInstrumentId);
         PaymentRequest paymentRequest = TestUtils.getPaymentRequest(paymentInstrumentId);
         Payment payment = TestUtils.getPayment(orderId, paymentInstrumentCard);
-        Mockito.when(paymentInstrumentService.getPaymentInstrument(paymentRequest.paymentInstrumentId()))
+        Mockito.when(paymentInstrumentService.getPaymentInstrument(paymentRequest.paymentInstrumentId(), userId))
                 .thenReturn(paymentInstrumentCard);
         Mockito.when(paymentMapper.map(paymentRequest, paymentInstrumentCard)).thenReturn(payment);
         Mockito.when(paymentRepository.save(payment)).thenReturn(payment);
         Mockito.when(paymentGatewayService.pay(payment))
                 .thenThrow(new RuntimeException("Error sending to payment gateway"));
 
-        paymentService.pay(paymentRequest);
+        paymentService.pay(paymentRequest, userId);
 
         Mockito.verify(paymentMapper, Mockito.times(1)).map(paymentRequest, paymentInstrumentCard);
         Mockito.verify(paymentRepository, Mockito.times(1)).save(payment);

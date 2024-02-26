@@ -22,9 +22,9 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentInstrumentService paymentInstrumentService;
 
     @Override
-    public PaymentResponse pay(PaymentRequest paymentRequest) {
+    public PaymentResponse pay(PaymentRequest paymentRequest, Long userId) {
         PaymentInstrument paymentInstrument = paymentInstrumentService
-                .getPaymentInstrument(paymentRequest.paymentInstrumentId());
+                .getPaymentInstrument(paymentRequest.paymentInstrumentId(), userId);
         Payment payment = paymentMapper.map(paymentRequest, paymentInstrument);
         PaymentGatewayResponse pay = sendToPaymentGateway(payment);
         setPaymentResult(pay, payment);

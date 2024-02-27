@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.context.ApplicationEventPublisher;
 
 public class PaymentServiceImplTest {
 
@@ -20,6 +21,7 @@ public class PaymentServiceImplTest {
     private PaymentGatewayService paymentGatewayService;
     private PaymentMapper paymentMapper;
     private PaymentInstrumentService paymentInstrumentService;
+    private ApplicationEventPublisher applicationEventPublisher;
     private PaymentServiceImpl paymentService;
 
     @BeforeEach
@@ -28,8 +30,9 @@ public class PaymentServiceImplTest {
         paymentGatewayService = Mockito.mock(PaymentGatewayService.class);
         paymentMapper = Mockito.mock(PaymentMapper.class);
         paymentInstrumentService = Mockito.mock(PaymentInstrumentService.class);
+        applicationEventPublisher = Mockito.mock(ApplicationEventPublisher.class);
         paymentService = new PaymentServiceImpl(paymentGatewayService, paymentMapper, paymentRepository,
-                paymentInstrumentService);
+                paymentInstrumentService, applicationEventPublisher);
     }
 
     @Test

@@ -16,6 +16,7 @@ public class PaymentMapperTest {
 
     @BeforeEach
     public void init() {
+        Mappers.getMapperClass(PaymentInstrumentMapper.class);
         this.paymentMapper = Mappers.getMapper(PaymentMapper.class);
     }
 

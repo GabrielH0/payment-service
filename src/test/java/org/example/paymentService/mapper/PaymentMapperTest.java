@@ -28,7 +28,7 @@ public class PaymentMapperTest {
 
         Assertions.assertEquals(paymentResponse.paymentId(), payment.getPaymentId());
         Assertions.assertEquals(paymentResponse.paymentStatus(), payment.getPaymentStatus());
-        Assertions.assertEquals(paymentResponse.paymentInstrument().paymentInstrumentId(),
+        Assertions.assertEquals(paymentResponse.paymentInstrument().getPaymentInstrumentId(),
                 payment.getPaymentInstrument().getPaymentInstrumentId());
         Assertions.assertEquals(paymentResponse.paymentDate(), payment.getPaymentDate());
         Assertions.assertEquals(paymentResponse.orderId(), payment.getOrderId());

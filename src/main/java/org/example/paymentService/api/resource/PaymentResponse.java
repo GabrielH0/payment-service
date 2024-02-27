@@ -8,7 +8,7 @@ import java.time.Instant;
 public record PaymentResponse(
     String paymentId,
     PaymentStatus paymentStatus,
-    PaymentInstrumentResponse paymentInstrument,
+    PaymentInstrumentResource paymentInstrument,
     Instant paymentDate,
     String orderId,
     Long userId,

@@ -7,7 +7,7 @@ import org.example.paymentService.model.PaymentInstrument;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = PaymentInstrumentMapper.class)
 public interface PaymentMapper {
 
     PaymentResponse map(Payment payment);

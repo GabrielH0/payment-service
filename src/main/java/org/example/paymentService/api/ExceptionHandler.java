@@ -1,5 +1,6 @@
 package org.example.paymentService.api;
 
+import org.example.paymentService.exceptions.PaymentInstrumentNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,12 @@ public class ExceptionHandler {
                 .stream().map(field -> field.getField() + " " + field.getDefaultMessage()).collect(Collectors.toList());
         return new ResponseEntity<>(getErrorsMap(errors), new HttpHeaders(), HttpStatus.BAD_REQUEST);
     }
+
+    @org.springframework.web.bind.annotation.ExceptionHandler(PaymentInstrumentNotFoundException.class)
+    public ResponseEntity<String> handlePaymentInstrumentNotFoundException(PaymentInstrumentNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
+    }
+
 
     private Map<String, List<String>> getErrorsMap(List<String> errors) {
         Map<String, List<String>> errorResponse = new HashMap<>();

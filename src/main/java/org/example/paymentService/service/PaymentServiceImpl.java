@@ -4,11 +4,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.paymentService.api.resource.PaymentRequest;
 import org.example.paymentService.api.resource.PaymentResponse;
+import org.example.paymentService.event.PaymentEvent;
 import org.example.paymentService.mapper.PaymentMapper;
 import org.example.paymentService.model.Payment;
 import org.example.paymentService.model.PaymentInstrument;
 import org.example.paymentService.repository.PaymentRepository;
 import org.example.paymentService.service.client.PaymentGatewayResponse;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -20,6 +22,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentMapper paymentMapper;
     private final PaymentRepository paymentRepository;
     private final PaymentInstrumentService paymentInstrumentService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Override
     public PaymentResponse pay(PaymentRequest paymentRequest, Long userId) {
@@ -29,6 +32,7 @@ public class PaymentServiceImpl implements PaymentService {
         PaymentGatewayResponse pay = sendToPaymentGateway(payment);
         setPaymentResult(pay, payment);
         paymentRepository.save(payment);
+        applicationEventPublisher.publishEvent(new PaymentEvent(payment, this));
         return paymentMapper.map(payment);
     }
 

@@ -11,7 +11,7 @@ import org.example.paymentService.model.PaymentInstrumentPix;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "default")
+@Mapper(componentModel = "spring")
 public interface PaymentInstrumentMapper {
 
     default PaymentInstrument map(PaymentInstrumentResource paymentInstrumentResource) {
